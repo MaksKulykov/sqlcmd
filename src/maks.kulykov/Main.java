@@ -40,27 +40,13 @@ public class Main {
                 }
                 default -> {
                     isConnection = true;
-                    System.out.println("Connection success!");
                 }
             }
         }
+
+        manager.connection();
 
         reader.close();
 
     }
 }
-
- /*   CREATE TABLE sqlcmd.users (
-        user_id serial PRIMARY KEY,
-        username VARCHAR ( 50 ) UNIQUE NOT NULL,
-    password VARCHAR ( 50 ) NOT NULL
-);
-  */
-
-/*    CREATE SEQUENCE user_id_seq
-        START WITH 1
-        INCREMENT BY 1
-        MINVALUE 1
-        NO MAXVALUE
-        CACHE 1;
- */

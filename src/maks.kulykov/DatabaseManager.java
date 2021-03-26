@@ -1,5 +1,9 @@
 package maks.kulykov;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 public class DatabaseManager {
     private String db = "mydb";
     private String userName = "postgres";
@@ -25,5 +29,20 @@ public class DatabaseManager {
             resp = "password";
         }
         return resp;
+    }
+
+    public void connection() {
+        try (Connection conn = DriverManager.getConnection(
+                "jdbc:postgresql://127.0.0.1:5432/" + cmdDB, cmdUserName, cmdPassword)) {
+            if (conn != null) {
+                System.out.println("Connected to the database!");
+            } else {
+                System.out.println("Failed to make connection!");
+            }
+        } catch (SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
