@@ -5,44 +5,36 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseManager {
-    private String db = "mydb";
-    private String userName = "postgres";
-    private String password = "postgres";
+    private final String db = "mydb";
+    private final String userName = "postgres";
+    private final String password = "postgres";
 
-    private String cmdDB;
-    private String cmdUserName;
-    private String cmdPassword;
-
-    public DatabaseManager(String db, String userName, String password) {
-        this.cmdDB = db;
-        this.cmdUserName = userName;
-        this.cmdPassword = password;
-    }
-
-    public String checkCredentials() {
-        String resp = "";
-        if (!cmdDB.equals(db)) {
-            resp =  "db";
+    public String checkCredentials(String cmdDb, String cmdUserName, String cmdPassword) {
+        String wrongCredential = "";
+        if (!cmdDb.equals(db)) {
+            wrongCredential =  "db";
         } else if (!cmdUserName.equals(userName)) {
-            resp = "username";
+            wrongCredential = "username";
         } else if (!cmdPassword.equals(password)) {
-            resp = "password";
+            wrongCredential = "password";
         }
-        return resp;
+        return wrongCredential;
     }
 
-    public void connection() {
+    public String connection() {
+        String responseMessage = "";
         try (Connection conn = DriverManager.getConnection(
-                "jdbc:postgresql://127.0.0.1:5432/" + cmdDB, cmdUserName, cmdPassword)) {
+                "jdbc:postgresql://127.0.0.1:5432/" + db, userName, password)) {
             if (conn != null) {
-                System.out.println("Connected to the database!");
+                responseMessage = "Connected to the database!";
             } else {
-                System.out.println("Failed to make connection!");
+                responseMessage = "Failed to make connection!";
             }
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return responseMessage;
     }
 }

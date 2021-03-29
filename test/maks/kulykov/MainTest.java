@@ -7,11 +7,11 @@ import static org.junit.Assert.assertEquals;
 public class MainTest {
 
     @Test
-    public void testWrongDBName() {
+    public void testWrongDbName() {
         DatabaseManager manager;
-        manager = new DatabaseManager("wrongDBName", "postgres", "postgres");
+        manager = new DatabaseManager();
 
-        String response = manager.checkCredentials();
+        String response = manager.checkCredentials("wrongDBName", "postgres", "postgres");
 
         assertEquals("db", response);
     }
@@ -19,9 +19,9 @@ public class MainTest {
     @Test
     public void testWrongUserName() {
         DatabaseManager manager;
-        manager = new DatabaseManager("mydb", "wrongUserName", "postgres");
+        manager = new DatabaseManager();
 
-        String response = manager.checkCredentials();
+        String response = manager.checkCredentials("mydb", "wrongUserName", "postgres");
 
         assertEquals("username", response);
     }
@@ -29,9 +29,9 @@ public class MainTest {
     @Test
     public void testWrongPassword() {
         DatabaseManager manager;
-        manager = new DatabaseManager("mydb", "postgres", "wrongPassword");
+        manager = new DatabaseManager();
 
-        String response = manager.checkCredentials();
+        String response = manager.checkCredentials("mydb", "postgres", "wrongPassword");
 
         assertEquals("password", response);
     }

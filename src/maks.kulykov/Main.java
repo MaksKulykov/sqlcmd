@@ -17,26 +17,23 @@ public class Main {
         System.out.println("Enter your password:");
         String password = reader.readLine();
 
-        DatabaseManager manager = new DatabaseManager(dbName, userName, password);
+        DatabaseManager manager = new DatabaseManager();
 
         boolean isConnection = false;
 
         while (!isConnection) {
-            switch (manager.checkCredentials()) {
+            switch (manager.checkCredentials(dbName, userName, password)) {
                 case "db" -> {
                     System.out.println("There is no database with this name. Please enter correct database:");
                     dbName = reader.readLine();
-                    manager = new DatabaseManager(dbName, userName, password);
                 }
                 case "username" -> {
                     System.out.println("Wrong user name. Please enter correct user name:");
                     userName = reader.readLine();
-                    manager = new DatabaseManager(dbName, userName, password);
                 }
                 case "password" -> {
                     System.out.println("Wrong password. Please enter correct password:");
                     password = reader.readLine();
-                    manager = new DatabaseManager(dbName, userName, password);
                 }
                 default -> {
                     isConnection = true;
@@ -44,7 +41,7 @@ public class Main {
             }
         }
 
-        manager.connection();
+        System.out.println(manager.connection());
 
         reader.close();
 
