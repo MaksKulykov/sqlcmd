@@ -1,16 +1,21 @@
 package maks.kulykov;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 public class MainTest {
 
+    DatabaseManager manager;
+
+    @Before
+    public void createDbManager() {
+        manager = new DatabaseManager();
+    }
+
     @Test
     public void testWrongDbName() {
-        DatabaseManager manager;
-        manager = new DatabaseManager();
-
         String response = manager.checkCredentials("wrongDBName", "postgres", "postgres");
 
         assertEquals("db", response);
@@ -18,9 +23,6 @@ public class MainTest {
 
     @Test
     public void testWrongUserName() {
-        DatabaseManager manager;
-        manager = new DatabaseManager();
-
         String response = manager.checkCredentials("mydb", "wrongUserName", "postgres");
 
         assertEquals("username", response);
@@ -28,11 +30,15 @@ public class MainTest {
 
     @Test
     public void testWrongPassword() {
-        DatabaseManager manager;
-        manager = new DatabaseManager();
-
         String response = manager.checkCredentials("mydb", "postgres", "wrongPassword");
 
         assertEquals("password", response);
+    }
+
+    @Test
+    public void testGetTablesList() {
+        String response = manager.getTablesList();
+
+        assertEquals("[users]", response);
     }
 }
