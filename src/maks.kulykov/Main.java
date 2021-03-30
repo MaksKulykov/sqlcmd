@@ -3,6 +3,7 @@ package maks.kulykov;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -42,6 +43,36 @@ public class Main {
         }
 
         System.out.println(manager.connection());
+
+        System.out.println("Enter a command or enter \"help\" to view a list of commands");
+
+        String command = reader.readLine();
+
+        boolean isExit = false;
+
+        while (!isExit) {
+            switch (command) {
+                case "help" -> {
+                    System.out.println("Command list:");
+                    System.out.println("list - show list of all tables");
+                    System.out.println("help - show list of all command");
+                    System.out.println("exit - exit program");
+                    command = reader.readLine();
+                }
+                case "list" -> {
+                    System.out.println(manager.getTablesList());
+                    command = reader.readLine();
+                }
+                case "exit" -> {
+                    System.out.println("See you!");
+                    isExit = true;
+                }
+                default -> {
+                    System.out.println("There is no such command. Try to enter command again or use 'help' for a hint.");
+                    command = reader.readLine();
+                }
+            }
+        }
 
         reader.close();
 
