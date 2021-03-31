@@ -43,12 +43,15 @@ public class DatabaseManager {
         try {
             DatabaseMetaData dbmd = conn.getMetaData();
             rs = dbmd.getTables(null, null, "%", new String[] { "TABLE" });
-            tableList = new StringBuilder("[");
+            tableList.append("[");
             while (rs.next()) {
                 tableList.append(rs.getString("TABLE_NAME"));
                 tableList.append(", ");
             }
-            tableList.delete(tableList.toString().length() - 2, tableList.toString().length());
+            int tableListLength = tableList.toString().length();
+            if (tableListLength > 3) {
+                tableList.delete(tableListLength - 2, tableListLength);
+            }
             tableList.append("]");
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
