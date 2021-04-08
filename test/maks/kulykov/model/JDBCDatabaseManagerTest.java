@@ -1,12 +1,11 @@
-package maks.kulykov;
+package maks.kulykov.model;
 
-import maks.kulykov.model.JDBCDatabaseManager;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class Controller {
+public class JDBCDatabaseManagerTest {
 
     JDBCDatabaseManager manager;
 
