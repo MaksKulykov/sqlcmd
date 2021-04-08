@@ -1,8 +1,8 @@
-package maks.kulykov;
+package maks.kulykov.model;
 
 import java.sql.*;
 
-public class DatabaseManager {
+public class JDBCDatabaseManager implements DatabaseManager {
     private final String db = "mydb";
     private final String userName = "postgres";
     private final String password = "postgres";
@@ -20,6 +20,7 @@ public class DatabaseManager {
         return wrongCredential;
     }
 
+    @Override
     public String connection() {
         String responseMessage = "";
         try {
@@ -37,6 +38,7 @@ public class DatabaseManager {
         return responseMessage;
     }
 
+    @Override
     public String getTablesList() {
         StringBuilder tableList = new StringBuilder();
         ResultSet rs = null;
