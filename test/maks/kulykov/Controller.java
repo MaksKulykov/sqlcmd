@@ -1,17 +1,18 @@
 package maks.kulykov;
 
+import maks.kulykov.model.JDBCDatabaseManager;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class MainTest {
+public class Controller {
 
-    DatabaseManager manager;
+    JDBCDatabaseManager manager;
 
     @Before
     public void createDbManager() {
-        manager = new DatabaseManager();
+        manager = new JDBCDatabaseManager();
     }
 
     @Test
@@ -37,6 +38,7 @@ public class MainTest {
 
     @Test
     public void testGetTablesList() {
+        manager.connection();
         String response = manager.getTablesList();
 
         assertEquals("[users]", response);
