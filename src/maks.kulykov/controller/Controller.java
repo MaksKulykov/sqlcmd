@@ -51,10 +51,17 @@ public class Controller {
         boolean isExit = false;
 
         while (!isExit) {
+            String[] tableData = new String[2];
+            if (command.startsWith("find|")) {
+                tableData = command.split("\\|");
+                command = tableData[0];
+            }
+
             switch (command) {
                 case "help" -> {
                     view.write("Command list:");
                     view.write("list - show list of all tables");
+                    view.write("find|tableName - show table data");
                     view.write("help - show list of all command");
                     view.write("exit - exit program");
                     command = view.read();
@@ -67,11 +74,25 @@ public class Controller {
                     view.write("See you!");
                     isExit = true;
                 }
+                case "find" -> {
+                    printHeader(manager.getTableHeaders(tableData[1]));
+                    command = view.read();
+                }
                 default -> {
                     view.write("There is no such command. Try to enter command again or use 'help' for a hint.");
                     command = view.read();
                 }
             }
         }
+    }
+
+    private void printHeader(String[] tableColumns) {
+        String result = "|";
+        for (String name : tableColumns) {
+            result += name + "|";
+        }
+        view.write("--------------------");
+        view.write(result);
+        view.write("--------------------");
     }
 }

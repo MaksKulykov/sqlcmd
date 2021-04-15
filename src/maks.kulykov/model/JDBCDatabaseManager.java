@@ -1,6 +1,7 @@
 package maks.kulykov.model;
 
 import java.sql.*;
+import java.util.Arrays;
 
 public class JDBCDatabaseManager implements DatabaseManager {
     private final String db = "mydb";
@@ -67,5 +68,26 @@ public class JDBCDatabaseManager implements DatabaseManager {
             }
         }
         return tableList.toString();
+    }
+
+    @Override
+    public String[] getTableHeaders(String tableName) {
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM information_schema.columns " +
+                    "WHERE table_schema = 'sqlcmd' AND table_name = '" + tableName + "'");
+            String[] tables = new String[100];
+            int index = 0;
+            while (rs.next()) {
+                tables[index++] = rs.getString("column_name");
+            }
+            tables = Arrays.copyOf(tables, index, String[].class);
+            rs.close();
+            stmt.close();
+            return tables;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new String[0];
+        }
     }
 }

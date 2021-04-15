@@ -5,5 +5,7 @@ public interface DatabaseManager {
 
     String getTablesList();
 
+    String[] getTableHeaders(String tableName);
+
     String checkCredentials(String dbName, String userName, String password);
 }
