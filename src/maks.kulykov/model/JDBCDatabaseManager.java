@@ -41,41 +41,58 @@ public class JDBCDatabaseManager implements DatabaseManager {
 
     @Override
     public String[] getTablesList() {
+        String[] tables = new String[100];
+        ResultSet rs = null;
         try {
             DatabaseMetaData dbmd = conn.getMetaData();
-            ResultSet rs = dbmd.getTables(null, null, "%", new String[] { "TABLE" });
-            String[] tableList = new String[100];
+            rs = dbmd.getTables(null, null, "%", new String[] { "TABLE" });
             int index = 0;
             while (rs.next()) {
-                tableList[index++] = rs.getString("TABLE_NAME");
+                tables[index++] = rs.getString("TABLE_NAME");
             }
-            tableList = Arrays.copyOf(tableList, index, String[].class);
-            rs.close();
-            return tableList;
+            tables = Arrays.copyOf(tables, index, String[].class);
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-            return new String[0];
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+            }
         }
+        return tables;
     }
 
     @Override
     public String[] getTableHeaders(String tableName) {
+        String[] headers = new String[100];
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM information_schema.columns " +
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT * FROM information_schema.columns " +
                     "WHERE table_schema = 'sqlcmd' AND table_name = '" + tableName + "'");
-            String[] tables = new String[100];
             int index = 0;
             while (rs.next()) {
-                tables[index++] = rs.getString("column_name");
+                headers[index++] = rs.getString("column_name");
             }
-            tables = Arrays.copyOf(tables, index, String[].class);
-            rs.close();
-            stmt.close();
-            return tables;
+            headers = Arrays.copyOf(headers, index, String[].class);
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-            return new String[0];
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException e) {
+                System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+            }
         }
+        return headers;
     }
 }
