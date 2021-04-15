@@ -3,6 +3,8 @@ package maks.kulykov.controller;
 import maks.kulykov.model.DatabaseManager;
 import maks.kulykov.view.Console;
 
+import java.util.Arrays;
+
 public class Controller {
     private DatabaseManager manager;
     private Console view;
@@ -67,7 +69,7 @@ public class Controller {
                     command = view.read();
                 }
                 case "list" -> {
-                    view.write(manager.getTablesList());
+                    view.write(Arrays.deepToString(manager.getTablesList()));
                     command = view.read();
                 }
                 case "exit" -> {

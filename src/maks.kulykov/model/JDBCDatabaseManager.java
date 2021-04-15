@@ -40,34 +40,22 @@ public class JDBCDatabaseManager implements DatabaseManager {
     }
 
     @Override
-    public String getTablesList() {
-        StringBuilder tableList = new StringBuilder();
-        ResultSet rs = null;
+    public String[] getTablesList() {
         try {
             DatabaseMetaData dbmd = conn.getMetaData();
-            rs = dbmd.getTables(null, null, "%", new String[] { "TABLE" });
-            tableList.append("[");
+            ResultSet rs = dbmd.getTables(null, null, "%", new String[] { "TABLE" });
+            String[] tableList = new String[100];
+            int index = 0;
             while (rs.next()) {
-                tableList.append(rs.getString("TABLE_NAME"));
-                tableList.append(", ");
+                tableList[index++] = rs.getString("TABLE_NAME");
             }
-            int tableListLength = tableList.toString().length();
-            if (tableListLength > 3) {
-                tableList.delete(tableListLength - 2, tableListLength);
-            }
-            tableList.append("]");
+            tableList = Arrays.copyOf(tableList, index, String[].class);
+            rs.close();
+            return tableList;
         } catch (SQLException e) {
             System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException e) {
-                System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
-            }
+            return new String[0];
         }
-        return tableList.toString();
     }
 
     @Override
@@ -86,7 +74,7 @@ public class JDBCDatabaseManager implements DatabaseManager {
             stmt.close();
             return tables;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
             return new String[0];
         }
     }

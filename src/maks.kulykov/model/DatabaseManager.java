@@ -3,7 +3,7 @@ package maks.kulykov.model;
 public interface DatabaseManager {
     String connection();
 
-    String getTablesList();
+    String[] getTablesList();
 
     String[] getTableHeaders(String tableName);
 

@@ -3,6 +3,8 @@ package maks.kulykov.model;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.assertEquals;
 
 public class JDBCDatabaseManagerTest {
@@ -38,8 +40,8 @@ public class JDBCDatabaseManagerTest {
     @Test
     public void testGetTablesList() {
         manager.connection();
-        String response = manager.getTablesList();
+        String[] response = manager.getTablesList();
 
-        assertEquals("[users]", response);
+        assertEquals("[users]", Arrays.deepToString(response));
     }
 }
