@@ -1,14 +1,15 @@
 package maks.kulykov.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
 public interface DatabaseManager {
     String connection();
 
-    String[] getTablesList();
+    ArrayList<String> getTablesList();
 
-    String[] getTableHeaders(String tableName);
+    ArrayList<String> getTableHeaders(String tableName);
 
     Set<HashMap<String, String>> getTableData(String tableName);
 

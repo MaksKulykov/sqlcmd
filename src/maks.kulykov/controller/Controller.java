@@ -3,9 +3,7 @@ package maks.kulykov.controller;
 import maks.kulykov.model.DatabaseManager;
 import maks.kulykov.view.Console;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 public class Controller {
     private DatabaseManager manager;
@@ -71,7 +69,7 @@ public class Controller {
                     command = view.read();
                 }
                 case "list" -> {
-                    view.write(Arrays.deepToString(manager.getTablesList()));
+                    printTablesList(manager.getTablesList());
                     command = view.read();
                 }
                 case "exit" -> {
@@ -79,7 +77,7 @@ public class Controller {
                     isExit = true;
                 }
                 case "find" -> {
-                    String[] columnNames = manager.getTableHeaders(commandData[1]);
+                    ArrayList<String> columnNames = manager.getTableHeaders(commandData[1]);
                     printHeader(columnNames);
 
                     Set<HashMap<String, String>> tableData = manager.getTableData(commandData[1]);
@@ -96,7 +94,20 @@ public class Controller {
         }
     }
 
-    private void printHeader(String[] tableColumns) {
+    private void printTablesList(ArrayList<String> tablesList) {
+        String result = "[";
+        if (tablesList.size() > 0) {
+            for (String table : tablesList) {
+                result += table + ", ";
+            }
+            result = result.substring(0, result.length() - 2);
+        }
+        result += "]";
+
+        view.write(result);
+    }
+
+    private void printHeader(ArrayList<String> tableColumns) {
         String result = "|";
         for (String name : tableColumns) {
             result += name + "|";
@@ -106,10 +117,10 @@ public class Controller {
         view.write("--------------------");
     }
 
-    private void printTableData(HashMap<String, String> data, String[] columnNames) {
+    private void printTableData(HashMap<String, String> data, ArrayList<String> columnNames) {
         String result = "|";
-        for (int i = 0; i < columnNames.length; i++) {
-            result += data.get(columnNames[i]) + "|";
+        for (int i = 0; i < columnNames.size(); i++) {
+            result += data.get(columnNames.get(i)) + "|";
         }
         view.write(result);
     }
