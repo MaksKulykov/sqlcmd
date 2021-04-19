@@ -4,6 +4,8 @@ import maks.kulykov.model.DatabaseManager;
 import maks.kulykov.view.Console;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Set;
 
 public class Controller {
     private DatabaseManager manager;
@@ -53,10 +55,10 @@ public class Controller {
         boolean isExit = false;
 
         while (!isExit) {
-            String[] tableData = new String[2];
+            String[] commandData = new String[2];
             if (command.startsWith("find|")) {
-                tableData = command.split("\\|");
-                command = tableData[0];
+                commandData = command.split("\\|");
+                command = commandData[0];
             }
 
             switch (command) {
@@ -77,7 +79,13 @@ public class Controller {
                     isExit = true;
                 }
                 case "find" -> {
-                    printHeader(manager.getTableHeaders(tableData[1]));
+                    String[] columnNames = manager.getTableHeaders(commandData[1]);
+                    printHeader(columnNames);
+
+                    Set<HashMap<String, String>> tableData = manager.getTableData(commandData[1]);
+                    for (HashMap<String, String> data : tableData) {
+                        printTableData(data, columnNames);
+                    }
                     command = view.read();
                 }
                 default -> {
@@ -96,5 +104,13 @@ public class Controller {
         view.write("--------------------");
         view.write(result);
         view.write("--------------------");
+    }
+
+    private void printTableData(HashMap<String, String> data, String[] columnNames) {
+        String result = "|";
+        for (int i = 0; i < columnNames.length; i++) {
+            result += data.get(columnNames[i]) + "|";
+        }
+        view.write(result);
     }
 }

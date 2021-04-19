@@ -2,12 +2,16 @@ package maks.kulykov.model;
 
 import java.sql.*;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class JDBCDatabaseManager implements DatabaseManager {
     private final String db = "mydb";
     private final String userName = "postgres";
     private final String password = "postgres";
     private Connection conn;
+    private String[] columnNames;
 
     public String checkCredentials(String cmdDb, String cmdUserName, String cmdPassword) {
         String wrongCredential = "";
@@ -93,6 +97,39 @@ public class JDBCDatabaseManager implements DatabaseManager {
                 System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
             }
         }
+        columnNames = headers;
         return headers;
+    }
+
+    @Override
+    public Set<HashMap<String, String>> getTableData(String tableName) {
+        Set<HashMap<String, String>> tableData = new HashSet<>();
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT * FROM sqlcmd." + tableName);
+            while (rs.next()) {
+                HashMap<String, String> data = new HashMap<>();
+                for (int i = 0; i < columnNames.length; i++) {
+                    data.put(columnNames[i], rs.getString(i + 1));
+                }
+                tableData.add(data);
+            }
+        } catch (SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException e) {
+                System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+            }
+        }
+        return tableData;
     }
 }
