@@ -78,12 +78,16 @@ public class Controller {
                 }
                 case "find" -> {
                     ArrayList<String> columnNames = manager.getTableHeaders(commandData[1]);
+                    int columns = columnNames.size();
+                    printLine(columns);
                     printHeader(columnNames);
+                    printLine(columns);
 
                     Set<HashMap<String, String>> tableData = manager.getTableData(commandData[1]);
                     for (HashMap<String, String> data : tableData) {
                         printTableData(data, columnNames);
                     }
+                    printLine(columns);
                     command = view.read();
                 }
                 default -> {
@@ -96,6 +100,7 @@ public class Controller {
 
     private void printTablesList(ArrayList<String> tablesList) {
         String result = "[";
+
         if (tablesList.size() > 0) {
             for (String table : tablesList) {
                 result += table + ", ";
@@ -108,20 +113,46 @@ public class Controller {
     }
 
     private void printHeader(ArrayList<String> tableColumns) {
-        String result = "|";
-        for (String name : tableColumns) {
-            result += name + "|";
+        String result = "| ";
+
+        for (String tableColumn : tableColumns) {
+            result = result + formatString(tableColumn);
         }
-        view.write("--------------------");
+
         view.write(result);
-        view.write("--------------------");
     }
 
     private void printTableData(HashMap<String, String> data, ArrayList<String> columnNames) {
-        String result = "|";
+        String result = "| ";
+
         for (int i = 0; i < columnNames.size(); i++) {
-            result += data.get(columnNames.get(i)) + "|";
+            result += formatString(data.get(columnNames.get(i)));
         }
+
         view.write(result);
+    }
+
+    private String formatString(String string) {
+        String result = "";
+
+        if (string.length() > 10) {
+            result = string.substring(0,7) + "... | ";
+        } else if (string.length() < 10) {
+            result = String.format("%-10s", string) + " | ";
+        } else {
+            result = string + " | ";
+        }
+
+        return result;
+    }
+
+    private void printLine(int columns) {
+        String line = "+";
+
+        for (int i = 0; i < columns; i++) {
+            line = line + "------------+";
+        }
+
+        view.write(line);
     }
 }
