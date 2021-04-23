@@ -44,7 +44,7 @@ public class Controller {
             }
         }
 
-        view.write(manager.connection());
+        view.write(manager.openConnection());
 
         view.write("Enter a command or enter \"help\" to view a list of commands");
 
@@ -61,34 +61,20 @@ public class Controller {
 
             switch (command) {
                 case "help" -> {
-                    view.write("Command list:");
-                    view.write("list - show list of all tables");
-                    view.write("find|tableName - show table data");
-                    view.write("help - show list of all command");
-                    view.write("exit - exit program");
+                    printHelp();
                     command = view.read();
                 }
                 case "list" -> {
                     printTablesList(manager.getTablesList());
                     command = view.read();
                 }
-                case "exit" -> {
-                    view.write("See you!");
-                    isExit = true;
-                }
                 case "find" -> {
-                    ArrayList<String> columnNames = manager.getTableHeaders(commandData[1]);
-                    int columns = columnNames.size();
-                    printLine(columns);
-                    printHeader(columnNames);
-                    printLine(columns);
-
-                    Set<HashMap<String, String>> tableData = manager.getTableData(commandData[1]);
-                    for (HashMap<String, String> data : tableData) {
-                        printTableData(data, columnNames);
-                    }
-                    printLine(columns);
+                    findTableData(commandData[1]);
                     command = view.read();
+                }
+                case "exit" -> {
+                    closeConnection();
+                    isExit = true;
                 }
                 default -> {
                     view.write("There is no such command. Try to enter command again or use 'help' for a hint.");
@@ -98,7 +84,34 @@ public class Controller {
         }
     }
 
-    private void printTablesList(ArrayList<String> tablesList) {
+    private void printHelp() {
+        view.write("Command list:");
+        view.write("list - show list of all tables");
+        view.write("find|tableName - show table data");
+        view.write("help - show list of all command");
+        view.write("exit - exit program");
+    }
+
+    private void findTableData(String commandData) {
+        List<String> columnNames = manager.getTableHeaders(commandData);
+        int columns = columnNames.size();
+        printLine(columns);
+        printHeader(columnNames);
+        printLine(columns);
+
+        Set<Map<String, String>> tableData = manager.getTableData(commandData);
+        for (Map<String, String> data : tableData) {
+            printTableData(data, columnNames);
+        }
+        printLine(columns);
+    }
+
+    private void closeConnection() {
+        manager.closeConnection();
+        view.write("See you!");
+    }
+
+    private void printTablesList(List<String> tablesList) {
         String result = "[";
 
         if (tablesList.size() > 0) {
@@ -112,7 +125,7 @@ public class Controller {
         view.write(result);
     }
 
-    private void printHeader(ArrayList<String> tableColumns) {
+    private void printHeader(List<String> tableColumns) {
         String result = "| ";
 
         for (String tableColumn : tableColumns) {
@@ -122,7 +135,7 @@ public class Controller {
         view.write(result);
     }
 
-    private void printTableData(HashMap<String, String> data, ArrayList<String> columnNames) {
+    private void printTableData(Map<String, String> data, List<String> columnNames) {
         String result = "| ";
 
         for (int i = 0; i < columnNames.size(); i++) {

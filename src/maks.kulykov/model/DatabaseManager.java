@@ -1,17 +1,17 @@
 package maks.kulykov.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 public interface DatabaseManager {
-    String connection();
+    String openConnection();
 
-    ArrayList<String> getTablesList();
+    void closeConnection();
 
-    ArrayList<String> getTableHeaders(String tableName);
+    List<String> getTablesList();
 
-    Set<HashMap<String, String>> getTableData(String tableName);
+    List<String> getTableHeaders(String tableName);
+
+    Set<Map<String, String>> getTableData(String tableName);
 
     String checkCredentials(String dbName, String userName, String password);
 }

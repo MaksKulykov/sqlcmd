@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -39,11 +40,11 @@ public class JDBCDatabaseManagerTest {
 
     @Test
     public void testGetTablesList() {
-        ArrayList<String> expectedList = new ArrayList<>();
+        List<String> expectedList = new ArrayList<>();
         expectedList.add("users");
 
-        manager.connection();
-        ArrayList<String> response = manager.getTablesList();
+        manager.openConnection();
+        List<String> response = manager.getTablesList();
 
         assertEquals(expectedList, response);
     }

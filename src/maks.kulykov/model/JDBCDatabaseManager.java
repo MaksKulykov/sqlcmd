@@ -8,7 +8,7 @@ public class JDBCDatabaseManager implements DatabaseManager {
     private final String userName = "postgres";
     private final String password = "postgres";
     private Connection conn;
-    private ArrayList<String> columnNames;
+    private List<String> columnNames;
 
     public String checkCredentials(String cmdDb, String cmdUserName, String cmdPassword) {
         String wrongCredential = "";
@@ -23,7 +23,7 @@ public class JDBCDatabaseManager implements DatabaseManager {
     }
 
     @Override
-    public String connection() {
+    public String openConnection() {
         String responseMessage = "";
         try {
             conn = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/" + db, userName, password);
@@ -41,13 +41,21 @@ public class JDBCDatabaseManager implements DatabaseManager {
     }
 
     @Override
-    public ArrayList<String> getTablesList() {
-        ArrayList<String> tables = new ArrayList<>();
+    public void closeConnection() {
+        try {
+            conn.close();
+        } catch (SQLException e) {
+            System.err.format("SQL State: %s\n%s", e.getSQLState(), e.getMessage());
+        }
+    }
+
+    @Override
+    public List<String> getTablesList() {
+        List<String> tables = new ArrayList<>();
         ResultSet rs = null;
         try {
             DatabaseMetaData dbmd = conn.getMetaData();
             rs = dbmd.getTables(null, null, "%", new String[] { "TABLE" });
-            int index = 0;
             while (rs.next()) {
                 tables.add(rs.getString("TABLE_NAME"));
             }
@@ -66,8 +74,8 @@ public class JDBCDatabaseManager implements DatabaseManager {
     }
 
     @Override
-    public ArrayList<String> getTableHeaders(String tableName) {
-        ArrayList<String> headers = new ArrayList<>();
+    public List<String> getTableHeaders(String tableName) {
+        List<String> headers = new ArrayList<>();
         Statement stmt = null;
         ResultSet rs = null;
         try {
@@ -96,15 +104,15 @@ public class JDBCDatabaseManager implements DatabaseManager {
     }
 
     @Override
-    public Set<HashMap<String, String>> getTableData(String tableName) {
-        Set<HashMap<String, String>> tableData = new HashSet<>();
+    public Set<Map<String, String>> getTableData(String tableName) {
+        Set<Map<String, String>> tableData = new HashSet<>();
         Statement stmt = null;
         ResultSet rs = null;
         try {
             stmt = conn.createStatement();
             rs = stmt.executeQuery("SELECT * FROM sqlcmd." + tableName);
             while (rs.next()) {
-                HashMap<String, String> data = new HashMap<>();
+                Map<String, String> data = new HashMap<>();
                 for (String columnName : columnNames) {
                     data.put(columnName, rs.getString(columnName));
                 }
