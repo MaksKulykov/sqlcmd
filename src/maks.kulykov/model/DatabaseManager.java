@@ -1,9 +1,17 @@
 package maks.kulykov.model;
 
-public interface DatabaseManager {
-    String connection();
+import java.util.*;
 
-    String getTablesList();
+public interface DatabaseManager {
+    String openConnection();
+
+    void closeConnection();
+
+    List<String> getTablesList();
+
+    List<String> getTableHeaders(String tableName);
+
+    Set<Map<String, String>> getTableData(String tableName);
 
     String checkCredentials(String dbName, String userName, String password);
 }

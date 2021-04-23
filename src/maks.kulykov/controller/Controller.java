@@ -3,6 +3,8 @@ package maks.kulykov.controller;
 import maks.kulykov.model.DatabaseManager;
 import maks.kulykov.view.Console;
 
+import java.util.*;
+
 public class Controller {
     private DatabaseManager manager;
     private Console view;
@@ -42,7 +44,7 @@ public class Controller {
             }
         }
 
-        view.write(manager.connection());
+        view.write(manager.openConnection());
 
         view.write("Enter a command or enter \"help\" to view a list of commands");
 
@@ -51,20 +53,27 @@ public class Controller {
         boolean isExit = false;
 
         while (!isExit) {
+            String[] commandData = new String[2];
+            if (command.startsWith("find|")) {
+                commandData = command.split("\\|");
+                command = commandData[0];
+            }
+
             switch (command) {
                 case "help" -> {
-                    view.write("Command list:");
-                    view.write("list - show list of all tables");
-                    view.write("help - show list of all command");
-                    view.write("exit - exit program");
+                    printHelp();
                     command = view.read();
                 }
                 case "list" -> {
-                    view.write(manager.getTablesList());
+                    printTablesList(manager.getTablesList());
+                    command = view.read();
+                }
+                case "find" -> {
+                    findTableData(commandData[1]);
                     command = view.read();
                 }
                 case "exit" -> {
-                    view.write("See you!");
+                    closeConnection();
                     isExit = true;
                 }
                 default -> {
@@ -73,5 +82,90 @@ public class Controller {
                 }
             }
         }
+    }
+
+    private void printHelp() {
+        view.write("Command list:\n" +
+        "list - show list of all tables\n" +
+        "find|tableName - show table data\n" +
+        "help - show list of all command\n" +
+        "exit - exit program");
+    }
+
+    private void findTableData(String commandData) {
+        List<String> columnNames = manager.getTableHeaders(commandData);
+        int columns = columnNames.size();
+        printLine(columns);
+        printHeader(columnNames);
+        printLine(columns);
+
+        Set<Map<String, String>> tableData = manager.getTableData(commandData);
+        for (Map<String, String> data : tableData) {
+            printTableData(data, columnNames);
+        }
+        printLine(columns);
+    }
+
+    private void closeConnection() {
+        manager.closeConnection();
+        view.write("See you!");
+    }
+
+    private void printTablesList(List<String> tablesList) {
+        String result = "[";
+
+        if (tablesList.size() > 0) {
+            for (String table : tablesList) {
+                result += table + ", ";
+            }
+            result = result.substring(0, result.length() - 2);
+        }
+        result += "]";
+
+        view.write(result);
+    }
+
+    private void printHeader(List<String> tableColumns) {
+        String result = "| ";
+
+        for (String tableColumn : tableColumns) {
+            result = result + formatString(tableColumn);
+        }
+
+        view.write(result);
+    }
+
+    private void printTableData(Map<String, String> data, List<String> columnNames) {
+        String result = "| ";
+
+        for (int i = 0; i < columnNames.size(); i++) {
+            result += formatString(data.get(columnNames.get(i)));
+        }
+
+        view.write(result);
+    }
+
+    private String formatString(String string) {
+        String result = "";
+
+        if (string.length() > 10) {
+            result = string.substring(0,7) + "... | ";
+        } else if (string.length() < 10) {
+            result = String.format("%-10s", string) + " | ";
+        } else {
+            result = string + " | ";
+        }
+
+        return result;
+    }
+
+    private void printLine(int columns) {
+        String line = "+";
+
+        for (int i = 0; i < columns; i++) {
+            line = line + "------------+";
+        }
+
+        view.write(line);
     }
 }
