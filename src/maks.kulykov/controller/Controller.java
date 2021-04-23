@@ -85,11 +85,11 @@ public class Controller {
     }
 
     private void printHelp() {
-        view.write("Command list:");
-        view.write("list - show list of all tables");
-        view.write("find|tableName - show table data");
-        view.write("help - show list of all command");
-        view.write("exit - exit program");
+        view.write("Command list:\n" +
+        "list - show list of all tables\n" +
+        "find|tableName - show table data\n" +
+        "help - show list of all command\n" +
+        "exit - exit program");
     }
 
     private void findTableData(String commandData) {
